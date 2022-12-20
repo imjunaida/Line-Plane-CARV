@@ -91,7 +91,7 @@ void LocalMapping::Run()
             {
             //unique_lock<mutex> lock(mpSemiDenseMapping->mMutexSemiDense);
             }
-            
+                    
         }
         else if(Stop())
         {

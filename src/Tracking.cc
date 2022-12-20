@@ -1574,9 +1574,9 @@ void Tracking::Reset()
     cout << " done" << endl;
 
     //Reset the Modeler
-    /*cout << "Reseting Modeler....";
+        /*cout << "Reseting Modeler....";
     mpModeler->RequestReset();
-    cout<< "done" << endl;*/
+        cout<< "done" << endl;*/
 
     // Reset Loop Closing
     cout << "Reseting Loop Closing...";

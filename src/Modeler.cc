@@ -141,7 +141,7 @@ void Modeler::Run()
                 RunRemainder();
 
                 UpdateModelDrawer();
-            }
+                }
 
             if(CheckFinish())
                 break;
@@ -202,11 +202,11 @@ void Modeler::AddFrameImage(const long unsigned int &frameID, const cv::Mat &im,
             mmFrameQueue.erase(mmFrameQueue.begin());
         }
         if (mmFrameQueue.count(frameID) > 0){
-            //std::cerr << "ERROR: trying to add an existing frame" << std::endl;
+           //std::cerr << "ERROR: trying to add an existing frame" << std::endl;
             return;
         }
         mmFrameQueue.insert(make_pair(frameID,imc));
-        mvpMapTwc.push_back(M);
+                mvpMapTwc.push_back(M);
     }
 
 std::vector<pair<cv::Mat,TextureFrame>> Modeler::GetTextures(int n)

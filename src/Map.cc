@@ -45,6 +45,7 @@ void Map::AddKeyFrame(KeyFrame *pKF)
     mspKeyFrames.insert(pKF);
     if(pKF->mnId>mnMaxKFid)
         mnMaxKFid=pKF->mnId;
+    newestKeyFrame = pKF;
 }
 
 void Map::AddMapPoint(MapPoint *pMP)

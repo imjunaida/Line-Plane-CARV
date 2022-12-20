@@ -262,8 +262,8 @@ void ProbabilityMapping::SemiDenseLoop(){
 
     std::vector<ORB_SLAM2::KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
     if(vpKFs.size() <10){return;}
-
-    for(size_t i =(size_t)std::max((int)vpKFs.size()-50,0);i < vpKFs.size(); i++ )
+//(size_t)std::max((int)vpKFs.size()-50,0)
+    for(size_t i =0;i < vpKFs.size(); i++ )
     {
         ORB_SLAM2::KeyFrame* kf = vpKFs[i];
 
