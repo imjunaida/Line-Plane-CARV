@@ -38,6 +38,7 @@
 #include "ProbabilityMapping.h"
 #include "Modeler.h"
 #include "CARV/ModelDrawer.h"
+#include <unistd.h>
 
 class Modeler;
 class ModelDrawer;
@@ -114,7 +115,7 @@ public:
     // TODO: Save/Load functions
     // SaveMap(const string &filename);
     // LoadMap(const string &filename);
-     Modeler* mpModeler;   
+     Modeler* mpModeler;
      Map* mpMap;
 
 
@@ -130,7 +131,7 @@ private:
     KeyFrameDatabase* mpKeyFrameDatabase;
 
     // Map structure that stores the pointers to all KeyFrames and MapPoints.
-
+   // Map* mpMap;
 
     // Tracker. It receives a frame and computes the associated camera pose.
     // It also decides when to insert a new keyframe, create some new MapPoints and
@@ -161,6 +162,7 @@ private:
     std::thread* mptLoopClosing;
     std::thread* mptViewer;
     std::thread* mptSemiDense;
+    std::thread* mptModeler;
 
     // Reset flag
     std::mutex mMutexReset;

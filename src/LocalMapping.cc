@@ -87,11 +87,13 @@ void LocalMapping::Run()
             }
 
             mpCurrentKeyFrame->IncreaseMappingId();
-            mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
+            
             {
-            //unique_lock<mutex> lock(mpSemiDenseMapping->mMutexSemiDense);
+            unique_lock<mutex> lock(mpSemiDenseMapping->mMutexSemiDense);
             }
-                    
+            mpModeler->AddKeyFrameEntry(mpCurrentKeyFrame);
+            mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
+            
         }
         else if(Stop())
         {
@@ -768,6 +770,11 @@ bool LocalMapping::isFinished()
 {
     unique_lock<mutex> lock(mMutexFinish);
     return mbFinished;
+}
+
+void LocalMapping::SetModeler(Modeler *pModeler)
+{
+    mpModeler=pModeler;
 }
 
 } //namespace ORB_SLAM

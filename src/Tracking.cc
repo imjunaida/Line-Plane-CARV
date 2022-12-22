@@ -46,10 +46,10 @@ using namespace std;
 namespace ORB_SLAM2
 {
 
-Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Map *pMap, KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor,Modeler* pModeler):
+Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Map *pMap, KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor):
     mState(NO_IMAGES_YET), mSensor(sensor), mbOnlyTracking(false), mbVO(false), mpORBVocabulary(pVoc),
     mpKeyFrameDB(pKFDB), mpInitializer(static_cast<Initializer*>(NULL)), mpSystem(pSys),
-    mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0),mpModeler(pModeler)
+    mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0)
 {
     // Load camera parameters from settings file
 
@@ -293,19 +293,11 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
         mCurrentFrame = Frame(mImGray,timestamp,mpORBextractorLeft,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth,gray_imu,rgb_imu);
 
     Track();
-   /*if(mState == OK){
+   if(mState == OK){
         cv::Mat imu;
         cv::undistort(im,imu,mK,mDistCoef);
         mpModeler->AddFrameImage(mCurrentFrame.mnId,imu);
-        pangolin::OpenGlMatrix MapTwc;
-        GetCurrentOpenGLCameraMatrix(MapTwc);
-        //mpModeler->mvpMapTwc.push_back(MapTwc);
-    }*/
-    cv::Mat imu;
-    cv::undistort(im,imu,mK,mDistCoef);
-    pangolin::OpenGlMatrix MapTwc;
-    GetCurrentOpenGLCameraMatrix(MapTwc);
-    mpModeler->AddFrameImage(mCurrentFrame.mnId,imu,MapTwc);
+    }
 
     return mCurrentFrame.mTcw.clone();
 }
@@ -1574,9 +1566,9 @@ void Tracking::Reset()
     cout << " done" << endl;
 
     //Reset the Modeler
-        /*cout << "Reseting Modeler....";
+    cout << "Reseting Modeler....";
     mpModeler->RequestReset();
-        cout<< "done" << endl;*/
+    cout<< "done" << endl;
 
     // Reset Loop Closing
     cout << "Reseting Loop Closing...";

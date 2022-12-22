@@ -21,7 +21,7 @@
 #include "Map.h"
 
 #include<mutex>
-
+#include "Modeler.h"
 namespace ORB_SLAM2
 {
 

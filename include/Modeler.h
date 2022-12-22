@@ -20,6 +20,9 @@ namespace ORB_SLAM2 {
     class KeyFrame;
     class Map;
     class MapPoint;
+    class Tracking;
+    class LoopClosing;
+    class LocalMapping;
 }
 
 
@@ -45,8 +48,14 @@ private:
 // interface class for surface reconstruction using CARV system
 class Modeler {
 public:
+    
     Modeler(ORB_SLAM2::Map* pMap);
     Modeler(ModelDrawer* pModelDrawer);
+
+    //TODO: Loop Closing
+    void SetLoopCloser(ORB_SLAM2::LoopClosing* pLoopCloser);
+    void SetLocalMapper(ORB_SLAM2::LocalMapping* pLocalMapper);
+    void SetTracker(ORB_SLAM2::Tracking* pTracker);
 
     void AddKeyFrameEntry(ORB_SLAM2::KeyFrame* pKF);
     void AddLineSegmentKeyFrameEntry(ORB_SLAM2::KeyFrame* pKF);
@@ -63,10 +72,13 @@ public:
     void AddTexture(ORB_SLAM2::KeyFrame* pKF);
     std::vector<pair<cv::Mat,TextureFrame>> GetTextures(int n);
     void RequestReset();
-    void AddFrameImage(const long unsigned int &frameID,const cv::Mat &im,pangolin::OpenGlMatrix &M);
+    void AddFrameImage(const long unsigned int &frameID,const cv::Mat &im);
     void Run();
     void SetFinish();
     bool CheckFinish();
+    //TODO:: 
+    void RequestFinish();
+    bool isFinished();
 
 
 public:
@@ -79,8 +91,8 @@ public:
     ORB_SLAM2::Map* mpMap;
     ModelDrawer* mpModelDrawer; 
     std::mutex mMutexReset;
+    void ResetIfRequested();
     bool mbResetRequested;
-    std::vector<pangolin::OpenGlMatrix> mvpMapTwc;
 
     // This avoid that two transcript entries are created simultaneously in separate threads
     std::mutex mMutexTranscript;
@@ -107,6 +119,11 @@ public:
     bool mbFinishRequested;
     bool mbFinished;
     std::mutex mMutexFinish;
+
+    ORB_SLAM2::Tracking* mpTracker;
+    ORB_SLAM2::LocalMapping* mpLocalMapper;
+    ORB_SLAM2::LoopClosing* mpLoopCloser;
+
 
 };
 

@@ -26,8 +26,8 @@
 namespace ORB_SLAM2
 {
 
-Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking, const string &strSettingPath):
-    mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpTracker(pTracking),
+Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, ModelDrawer* pModelDrawer, Tracking *pTracking, const string &strSettingPath):
+    mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpModelDrawer(pModelDrawer),mpTracker(pTracking),
     mbFinishRequested(false), mbFinished(true), mbStopped(false), mbStopRequested(false)
 {
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -54,6 +54,8 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
     mfy = fSettings["Camera.fy"];
     mcx = fSettings["Camera.cx"];
     mcy = fSettings["Camera.cy"];
+    int nRGB = fSettings["Camera.RGB"];
+    mbRGB=nRGB;
 
 }
 
@@ -168,8 +170,10 @@ void Viewer::Run()
         mpMapDrawer->DrawCurrentCamera(Twc);
         if(menuShowKeyFrames || menuShowGraph)
             mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph);
-        if(menuShowPoints)
+        if(menuShowPoints){
             mpMapDrawer->DrawMapPoints();
+            mpModelDrawer->DrawModelPoints();
+            }
         if(menuShowSemiDense)
             mpMapDrawer->DrawSemiDense(menuSigmaTH);
 
@@ -177,13 +181,14 @@ void Viewer::Run()
         CheckGlDieOnError()
         // carv: show model or triangle with light from camera
         if(menuShowModel && menuShowTexture) {
-            mpMapDrawer->DrawModel();
+            mpModelDrawer->DrawModel(mbRGB);
+            mpModelDrawer->DrawTriangles(Twc);
         }
         else if (menuShowModel && !menuShowTexture) {
-            mpMapDrawer->DrawTriangles(Twc);
+            mpModelDrawer->DrawTriangles(Twc);
         }
         else if (!menuShowModel && menuShowTexture) {
-            mpMapDrawer->DrawFrame();
+            mpModelDrawer->DrawModel(mbRGB);
         }
         CheckGlDieOnError()
 

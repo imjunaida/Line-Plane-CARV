@@ -25,6 +25,7 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include "Modeler.h"
 
 namespace ORB_SLAM2
 {
@@ -83,15 +84,15 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Model Drawer
     mpModelDrawer = new ModelDrawer();
     mpModeler = new Modeler(mpModelDrawer);
-    
+     
     //Create Drawers. These are used by the Viewer
     mpFrameDrawer = new FrameDrawer(mpMap);
-    mpMapDrawer = new MapDrawer(mpMap, strSettingsFile,mpModeler);
+    mpMapDrawer = new MapDrawer(mpMap, strSettingsFile);
 
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
-                             mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor,mpModeler);
+                             mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor);
 
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor==MONOCULAR);
@@ -105,8 +106,11 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpSemiDenseMapping = new ProbabilityMapping(mpMap,mpModeler);
     mptSemiDense = new thread(&ProbabilityMapping::Run, mpSemiDenseMapping);
 
+    //Modeler Thread
+   
     //Initialize the Viewer thread and launch
-    mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile);
+    mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpModelDrawer,mpTracker,strSettingsFile);
+    mptModeler = new thread(&Modeler::Run,mpModeler);
     if(bUseViewer)
         mptViewer = new thread(&Viewer::Run, mpViewer);
 
@@ -127,6 +131,10 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser->SetLocalMapper(mpLocalMapper);
 
     //CARV: Set pointer of Modeler
+    mpMap->SetModeler(mpModeler);
+    //mpTracker->SetModeler(mpModeler);
+    mpLocalMapper->SetModeler(mpModeler);
+    mpModelDrawer->SetModeler(mpModeler);
    // mpTracker->SetModeler(mpModeler);
 }
 
@@ -292,12 +300,14 @@ void System::Shutdown()
 {
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
+    if(mpViewer){
     mpViewer->RequestFinish();
+    mpModeler->RequestFinish();}
     mpSemiDenseMapping->RequestFinish();
 
     // Wait until all thread have effectively stopped
     while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished()  ||
-          !mpViewer->isFinished()      || mpLoopCloser->isRunningGBA() || !mpSemiDenseMapping->isFinished())
+          !mpViewer->isFinished()      || mpLoopCloser->isRunningGBA() || !mpSemiDenseMapping->isFinished() || !mpModeler->isFinished())
     {
         usleep(5000);
     }

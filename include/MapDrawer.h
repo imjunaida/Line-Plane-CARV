@@ -25,7 +25,6 @@
 #include"MapPoint.h"
 #include"KeyFrame.h"
 #include<pangolin/pangolin.h>
-#include "Modeler.h"
 #include<mutex>
 
 namespace ORB_SLAM2
@@ -34,15 +33,11 @@ namespace ORB_SLAM2
 class MapDrawer
 {
 public:
-    MapDrawer(Map* pMap, const string &strSettingPath,Modeler* pModeler);
+    MapDrawer(Map* pMap, const string &strSettingPath);
 
     Map* mpMap;
-    Modeler* mpModeler;
 
     void DrawSemiDense(const double sigma);
-    void DrawModel();
-    void DrawTriangles(pangolin::OpenGlMatrix &Twc);
-    void DrawFrame();
 
     void DrawMapPoints();
     void DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph);

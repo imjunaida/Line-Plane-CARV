@@ -5,7 +5,7 @@
 #include "KeyFrame.h"
 #include <pangolin/pangolin.h>
 #include "LineDetector.h"
-
+#include <boost/filesystem.hpp>
 
 // Model Class
 Model::Model(const vector<dlovi::Matrix> &modelPoints, const list<dlovi::Matrix> &modelTris)
@@ -141,7 +141,19 @@ void Modeler::Run()
                 RunRemainder();
 
                 UpdateModelDrawer();
+                boost::filesystem::path dir("ObjectFiles");
+                boost::filesystem::path objfile = boost::filesystem::current_path()/dir;
+                if(!boost::filesystem::exists(objfile) && !boost::filesystem::create_directories(objfile))
+                {
+                    std::cerr<<"Failed to create directory:" <<objfile<<std::endl;
+                    continue;
                 }
+                std::string strFileName("ObjectFiles/model.obj");
+                std::string strFinalFilename("ObjectFiles/finalmodel.obj");
+                WriteModel(strFileName);
+                boost::filesystem::copy_file(strFileName,strFinalFilename,boost::filesystem::copy_option::overwrite_if_exists);
+            }
+            ResetIfRequested();
 
             if(CheckFinish())
                 break;
@@ -188,7 +200,7 @@ bool Modeler::CheckNewTranscriptEntry()
     }
 }
 
-void Modeler::AddFrameImage(const long unsigned int &frameID, const cv::Mat &im,pangolin::OpenGlMatrix &M)
+void Modeler::AddFrameImage(const long unsigned int &frameID, const cv::Mat &im)
     {
         unique_lock<mutex> lock(mMutexFrame);
 
@@ -202,11 +214,10 @@ void Modeler::AddFrameImage(const long unsigned int &frameID, const cv::Mat &im,
             mmFrameQueue.erase(mmFrameQueue.begin());
         }
         if (mmFrameQueue.count(frameID) > 0){
-           //std::cerr << "ERROR: trying to add an existing frame" << std::endl;
+            std::cerr << "ERROR: trying to add an existing frame" << std::endl;
             return;
         }
         mmFrameQueue.insert(make_pair(frameID,imc));
-                mvpMapTwc.push_back(M);
     }
 
 std::vector<pair<cv::Mat,TextureFrame>> Modeler::GetTextures(int n)
@@ -260,3 +271,54 @@ void Modeler::UpdateModelDrawer() {
             usleep(100);
         }
     }
+    void Modeler::SetLocalMapper(ORB_SLAM2::LocalMapping* pLocalMapper)
+{
+    mpLocalMapper = pLocalMapper;
+}
+
+    void Modeler::SetLoopCloser(ORB_SLAM2::LoopClosing* pLoopCloser)
+{
+    mpLoopCloser = pLoopCloser;
+}
+
+    void Modeler::SetTracker(ORB_SLAM2::Tracking* pTracker)
+{
+    mpTracker = pTracker;
+}
+
+void Modeler::RequestFinish()
+{
+    unique_lock<mutex> lock(mMutexFinish);
+    mbFinishRequested = true;
+}
+
+bool Modeler::isFinished()
+{
+unique_lock<mutex> lock(mMutexFinish);
+return mbFinished;
+}
+
+void Modeler::ResetIfRequested()
+{
+    unique_lock<mutex> lock(mMutexReset);
+    if(mbResetRequested)
+    {
+        {
+            unique_lock<mutex> lock2(mMutexTranscript);
+            mTranscriptInterface.addResetEntry();
+        }
+        {
+            unique_lock<mutex> lock2(mMutexTexture);
+            mdTextureQueue.clear();
+        }
+        {
+            unique_lock<mutex> lock2(mMutexFrame);
+            mmFrameQueue.clear();
+        }
+        {
+            //TODO: ADD Lines and Planes
+        }
+        mbFirstKeyFrame =true;
+        mbResetRequested =false;
+    }
+}

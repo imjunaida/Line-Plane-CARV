@@ -26,9 +26,11 @@
 #include "MapDrawer.h"
 #include "Tracking.h"
 #include "System.h"
-
+#include <string>
 #include <mutex>
+#include "CARV/ModelDrawer.h"
 
+class ModelDrawer;
 namespace ORB_SLAM2
 {
 
@@ -40,7 +42,7 @@ class System;
 class Viewer
 {
 public:
-    Viewer(System* pSystem, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Tracking *pTracking, const string &strSettingPath);
+    Viewer(System* pSystem, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, ModelDrawer* pModelDrawer, Tracking *pTracking, const string &strSettingPath);
 
     // Main thread function. Draw points, keyframes, the current camera pose and the last processed
     // frame. Drawing is refreshed according to the camera fps. We use Pangolin.
@@ -55,6 +57,8 @@ public:
     bool isStopped();
 
     void Release();
+    
+    ModelDrawer* mpModelDrawer;
 
 private:
 
@@ -81,6 +85,7 @@ private:
     bool mbStopped;
     bool mbStopRequested;
     std::mutex mMutexStop;
+    bool mbRGB;
 
 };
 
