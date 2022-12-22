@@ -132,10 +132,10 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     //CARV: Set pointer of Modeler
     mpMap->SetModeler(mpModeler);
-    //mpTracker->SetModeler(mpModeler);
+    mpTracker->SetModeler(mpModeler);
     mpLocalMapper->SetModeler(mpModeler);
     mpModelDrawer->SetModeler(mpModeler);
-   // mpTracker->SetModeler(mpModeler);
+
 }
 
 cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp)
