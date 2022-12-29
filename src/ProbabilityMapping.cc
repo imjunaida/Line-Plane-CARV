@@ -125,7 +125,7 @@ Modeler* ProbabilityMapping::GetModeler()
 
 void ProbabilityMapping::WriteModel()
 {
-    boost::filesystem::path results_dir("results_line_segments/" +mLineDetector.GetStringDateTime());
+    boost::filesystem::path results_dir("Reconstructed Model/" +mLineDetector->GetStringDateTime());
     boost::filesystem::path results_path = boost::filesystem::current_path() / results_dir;
 
     if( ! boost::filesystem::exists(results_path) && ! boost::filesystem::create_directories(results_path) ){
@@ -133,7 +133,7 @@ void ProbabilityMapping::WriteModel()
         return;
     }
 
-    std::string strFileName("results_line_segments/" + mLineDetector.GetStringDateTime() + "/model.obj");
+    std::string strFileName("Reconstructed Model/" + mLineDetector->GetStringDateTime() + "/model.obj");
 
     mpModeler->WriteModel(strFileName);
     std::cout << "saved mesh model" << std::endl;
@@ -144,7 +144,7 @@ void ProbabilityMapping::SaveSemiDensePoints()
 {
     std::vector<ORB_SLAM2::KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
 
-    boost::filesystem::path results_dir("results_line_segments/" +mLineDetector.GetStringDateTime());
+    boost::filesystem::path results_dir("results_line_segments/" +mLineDetector->GetStringDateTime());
     boost::filesystem::path results_path = boost::filesystem::current_path() / results_dir;
 
     if( ! boost::filesystem::exists(results_path) && ! boost::filesystem::create_directories(results_path) ){
@@ -152,7 +152,7 @@ void ProbabilityMapping::SaveSemiDensePoints()
         return;
     }
 
-    std::string strFileName("results_line_segments/" + mLineDetector.GetStringDateTime() + "/semi_pointcloud.obj");
+    std::string strFileName("results_line_segments/" + mLineDetector->GetStringDateTime() + "/semi_pointcloud.obj");
 
     std::ofstream fileOut(strFileName.c_str(), std::ios::out);
     if(!fileOut){
@@ -210,6 +210,7 @@ ProbabilityMapping::ProbabilityMapping(ORB_SLAM2::Map* pMap, Modeler* pModeler):
     mpModeler = pModeler;
     mpMap->SetModeler(mpModeler);
     mpModelDrawer->SetModeler(mpModeler);
+    mLineDetector = new LineDetector();
 }
 
 void ProbabilityMapping::Run()
@@ -235,6 +236,7 @@ void ProbabilityMapping::Run()
             SemiDenseLoop();
             //make point position dependent to kf position
             UpdateAllSemiDensePointSet();
+            //ORB_SLAM2::KeyFrame* kf = mpMap->newestKeyFrame;
 
             /*if (mpModeler->CheckNewTranscriptEntry()) {
 
@@ -304,10 +306,10 @@ void ProbabilityMapping::SemiDenseLoop(){
         clock_gettime(CLOCK_MONOTONIC, &start);*/
 
         // detect edge map
-        mLineDetector.DetectEdgeMap(kf);
+        //mLineDetector->DetectEdgeMap(kf);
 
         // detect line segments
-        //mLineDetector.DetectLineSegments(kf);
+        //mLineDetector->DetectLineSegments(kf);
 
         /*clock_gettime(CLOCK_MONOTONIC, &finish);
         duration = ( finish.tv_sec - start.tv_sec );
@@ -536,8 +538,8 @@ void ProbabilityMapping::ResetIfRequested()
         newModeler->UpdateModelDrawer();
         delete mpModeler;
         mpModeler = newModeler;*/
-        mLineDetector.Reset();
-        mPlaneExtractor.Reset();
+        mLineDetector->Reset();
+        //mPlaneExtractor->Reset();
         mbResetRequested=false;
     }
 }
@@ -607,7 +609,17 @@ void ProbabilityMapping::UpdateAllSemiDensePointSet(){
             UpdateSemiDensePointSet(kf);
             kf->SetPoseChanged(false);
         }
+        if(!kf->line3D_flag){
+        mLineDetector->LineFittingOnline(kf);
+        //mPlaneExtractor->ComputePlanes(kf);
+        }
+        if(!kf->mTranscriptFlag)
+        {
+            mpModeler->AddLineSegmentKeyFrameEntry(kf);
+            //mpModeler->AddPlaneKeyFrameEntry(kf);
+        }
         kf->SetEraseSemiDense();
+        
     }
 }
 

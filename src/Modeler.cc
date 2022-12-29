@@ -104,12 +104,15 @@ void Modeler::AddLineSegmentKeyFrameEntry(ORB_SLAM2::KeyFrame *pKF)
     unique_lock<mutex> lock(mMutexTranscript);
     //mTranscriptInterface.addLineSegmentKeyFrameInsertionEntry(pKF);
     mTranscriptInterface.addLineSegmentKeyFrameInsertionEntry(pKF);
+    AddTexture(pKF);
+
+    pKF->mTranscriptFlag=true;
 }
 void Modeler::AddPlaneKeyFrameEntry(ORB_SLAM2::KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexTranscript);
-    mTranscriptInterface.addPlaneKeyFrameInsertionEntry(pKF);
-    //mTranscriptInterface.addSemiDenseKeyFrameInsertionEntry(pKF);
+    //mTranscriptInterface.addPlaneKeyFrameInsertionEntry(pKF);
+    mTranscriptInterface.addSemiDenseKeyFrameInsertionEntry(pKF);
     AddTexture(pKF);
 
 }

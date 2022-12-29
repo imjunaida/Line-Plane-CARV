@@ -135,9 +135,9 @@ private:
 	Modeler* mpModeler;
 	ModelDrawer* mpModelDrawer;
 
-	LineDetector mLineDetector;
+	LineDetector* mLineDetector;
 
-	PlaneExtractor mPlaneExtractor;
+	PlaneExtractor* mPlaneExtractor;
 
 	// helper functions, some are not used
 	void GetTR(ORB_SLAM2::KeyFrame* kf, cv::Mat* t, cv::Mat* r);

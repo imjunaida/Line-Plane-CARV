@@ -174,6 +174,8 @@ public:
 	cv::Mat mLines3D; // 3D line segments, each row: (sx, sy, sz, ex, ey, ez)
     cv::Mat mEdgeIndex; // edge chains correspondence index for each pixel (integers, init: -1)
     std::vector<pair<int,int>> mPixelIndex;
+    bool line3D_flag;
+    bool mTranscriptFlag;
     EdgeMap* mEdgeMap;
     //Plane parameters
     std::vector<cv::Vec4f> mPlanes;

@@ -71,7 +71,7 @@ public:
 
     // This avoid that two points are created simultaneously in separate threads (id conflict)
     std::mutex mMutexPointCreation;
-    KeyFrame* newestKeyFrame;
+    KeyFrame* newestKeyFrame{nullptr};
 
 protected:
     std::set<MapPoint*> mspMapPoints;

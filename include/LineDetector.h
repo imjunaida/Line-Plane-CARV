@@ -66,6 +66,8 @@ public:
     void LineFittingEDLinesOffline(std::vector<ORB_SLAM2::KeyFrame*> vpKFs,Modeler* pModeler);
     // run edge-aided line segment extraction (offline)
     void LineFittingOffline(std::vector<ORB_SLAM2::KeyFrame*> vpKFs, Modeler* pModeler);
+    //run planar-line segment detection in an online set-up upon creation of new keyframes
+    void LineFittingOnline(ORB_SLAM2::KeyFrame* kf);
 
     // edge detection by EdgeDrawing
     void DetectEdgeMap(ORB_SLAM2::KeyFrame* kf);

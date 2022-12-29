@@ -39,6 +39,7 @@
 #include "System.h"
 #include "Modeler.h"
 #include "CARV/ModelDrawer.h"
+#include "LineDetector.h"
 
 #include <mutex>
 
@@ -46,6 +47,7 @@
 class ProbabilityMapping;
 class Modeler;
 class ModelDrawer;
+class LineDetector;
 
 namespace ORB_SLAM2
 {
@@ -105,6 +107,7 @@ public:
     int mSensor;
 
     // Current Frame
+    LineDetector mLineDetector;
     Frame mCurrentFrame;
     cv::Mat mImGray;
 

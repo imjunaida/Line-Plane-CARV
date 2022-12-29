@@ -22,39 +22,20 @@ float INTER_KEYFRAME_ANGLE_THRESH = 0.9781;//12 Degrees
 PlaneExtractor::PlaneExtractor()
 {
 }
-void PlaneExtractor::ComputePlanes(std::vector<ORB_SLAM2::KeyFrame *> vpKFs)
+void PlaneExtractor::ComputePlanes(ORB_SLAM2::KeyFrame* kf )
 {
-    struct timespec start, finish, start_part, finish_part;
-    double duration,duration_part;
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    for (size_t indKF=0; indKF < vpKFs.size();indKF++){
-        ORB_SLAM2::KeyFrame* kf =vpKFs[indKF];
-        kf->SetNotEraseSemiDense();
+     kf->SetNotEraseSemiDense();
      if( kf->isBad() || !kf->semidense_flag_ || !kf->interKF_depth_flag_) {
             kf->SetEraseSemiDense();
-            continue;
+            return;
         }
-        clock_gettime(CLOCK_MONOTONIC, &start_part);
-        std::cout<<"Number of lines for Planes"<<kf->mLines3D.rows<<std::endl;
 
         GetPlanesfromLines(kf);
         
         InterKFPlaneMatch(kf);
-        
-        clock_gettime(CLOCK_MONOTONIC, &finish_part);
-        duration_part = ( finish_part.tv_sec - start_part.tv_sec );
-        duration_part += ( finish_part.tv_nsec - start_part.tv_nsec ) / 1000000000.0;
-        duration_part *= 1000.0;
 
         kf->SetEraseSemiDense();
-    }
 
-    clock_gettime(CLOCK_MONOTONIC, &finish);
-    duration = ( finish.tv_sec - start.tv_sec );
-    duration += ( finish.tv_nsec - start.tv_nsec ) / 1000000000.0;
-    duration *= 1000.0;
-    std::cout << "Plane reconstruction took "<< duration << "ms  avg:" << duration/vpKFs.size() << "ms  #KF:" << vpKFs.size() << std::endl;
-    std::cout << "Plane fitting took: "<< duration_part << "ms  avg:" << duration_part/vpKFs.size() << "ms  #KF:" << vpKFs.size() << std::endl;
 }
 void PlaneExtractor::GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf)
 {

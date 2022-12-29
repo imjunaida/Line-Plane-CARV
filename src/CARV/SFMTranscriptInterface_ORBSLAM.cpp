@@ -211,7 +211,7 @@ void SFMTranscriptInterface_ORBSLAM::addLineSegmentKeyFrameInsertionEntry(ORB_SL
         nCamIndex = m_mKeyFrame_Index.size();
         m_mKeyFrame_Index[kf] = nCamIndex;
 
-        for (int i = 0; i < kf->mLines3D.rows;i=i+6) {
+        for (int i = 0; i < kf->mLines3D.rows;i++) {
             float x1 = (kf->mLines3D.at<float>(i,3) - kf->mLines3D.at<float>(i,0))/10;
             float y1 = (kf->mLines3D.at<float>(i,4) - kf->mLines3D.at<float>(i,1))/10;
             float z1 = (kf->mLines3D.at<float>(i,5) - kf->mLines3D.at<float>(i,2))/10;

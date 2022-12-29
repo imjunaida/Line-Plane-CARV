@@ -26,7 +26,7 @@ class PlaneExtractor
 {
 public:
     PlaneExtractor();
-    void ComputePlanes(std::vector<ORB_SLAM2::KeyFrame *> vpKFs);
+    void ComputePlanes(ORB_SLAM2::KeyFrame* kf);
     void GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf);
     bool isZero(cv::Point3d pt);
 

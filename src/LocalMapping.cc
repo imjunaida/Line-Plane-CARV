@@ -91,7 +91,8 @@ void LocalMapping::Run()
             {
             unique_lock<mutex> lock(mpSemiDenseMapping->mMutexSemiDense);
             }
-            mpModeler->AddKeyFrameEntry(mpCurrentKeyFrame);
+            //mpModeler->AddKeyFrameEntry(mpCurrentKeyFrame);
+            mpModeler->AddTexture(mpCurrentKeyFrame);
             mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
             
         }

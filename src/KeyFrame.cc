@@ -86,6 +86,8 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
      mLines3D = cv::Mat::zeros(0,6,CV_32F);
      mEdgeIndex = cv::Mat::ones(im_.rows, im_.cols, CV_32S) * (-1);
      mEdgeMap = NULL;
+     line3D_flag =false;
+     mTranscriptFlag=false;
 }
 
 KeyFrame::~KeyFrame()
@@ -829,6 +831,8 @@ void KeyFrame::Release()
     GradTheta.release();
     SemiDensePointSets_.release();
     mLines.release();
+    mLines3D.release();
+    mLinesSeg.release();
     mLineIndex.release();
     mEdgeIndex.release();
 }

@@ -493,6 +493,18 @@ void LineDetector::LineFittingEDLinesOffline(std::vector<ORB_SLAM2::KeyFrame *> 
 }
 
 
+void LineDetector::LineFittingOnline(ORB_SLAM2::KeyFrame* kf) {
+        if( kf->isBad() || !kf->semidense_flag_ || !kf->interKF_depth_flag_) {
+            kf->SetEraseSemiDense();
+            return;
+        }
+        LineFitting(kf);
+
+        kf->line3D_flag=true;
+        kf->SetEraseSemiDense();
+
+}
+
 void LineDetector::LineFittingOffline(std::vector<ORB_SLAM2::KeyFrame *> vpKFs, Modeler* pModeler) {
     struct timespec start, finish, start_part, finish_part;
     double duration, duration_fit, duration_cluster, temp_duration_part;
@@ -886,8 +898,8 @@ void LineDetector::DetectEdgeMap(ORB_SLAM2::KeyFrame* kf) {
     clock_gettime(CLOCK_MONOTONIC, &finish);
     duration = (finish.tv_sec - start.tv_sec);
     duration += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-    std::cout << "edge detection took: " << duration << "s" << std::endl;
-    std::cout << "#edge chains: " << map->noSegments << std::endl;
+    //std::cout << "edge detection took: " << duration << "s" << std::endl;
+    //std::cout << "#edge chains: " << map->noSegments << std::endl;
 
     time_edge.push_back(duration*1000);
 
@@ -896,10 +908,6 @@ void LineDetector::DetectEdgeMap(ORB_SLAM2::KeyFrame* kf) {
 
 void LineDetector::LineFitting(ORB_SLAM2::KeyFrame* kf)
 {
-    struct timespec start, finish;
-    double duration;
-
-    clock_gettime(CLOCK_MONOTONIC, &start);
 
     if(kf->mEdgeMap == NULL){
         std::cerr << "error: no edge map" << std::endl;
@@ -914,13 +922,6 @@ void LineDetector::LineFitting(ORB_SLAM2::KeyFrame* kf)
 
     } //end-for
 
-    clock_gettime(CLOCK_MONOTONIC, &finish);
-    duration = ( finish.tv_sec - start.tv_sec );
-    duration += ( finish.tv_nsec - start.tv_nsec ) / 1000000000.0;
-    std::cout << "3d reconstruction line segments took: "<< duration << "s" << std::endl;
-    std::cout << "#segments: " << kf->mLines3D.rows << std::endl;
-
-    time_fitting.push_back(duration*1000);
 
 }
 
