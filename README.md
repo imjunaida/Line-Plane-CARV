@@ -73,7 +73,7 @@ chmod +x build_ros.sh
 source Examples/ROS/ORB_SLAM2/build/devel/setup.bash
 ```
 
-# Running the modules
+# 3. Running the modules
 We used cv_camera module of ROS to get image streams from camera.
 
 Check the list of devices for parameter cv_camera/device_id
