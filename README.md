@@ -97,5 +97,5 @@ The object files get saved in the Object Files directory in real-time which can 
 
 #Important Repositories
 1. [ORB-SLAM Free Space Carving](https://github.com/atlas-jj/ORB-SLAM-free-space-carving)
-2.[Incremental 3D Line Segment Extraction](https://github.com/shidahe/semidense-lines)
+2. [Incremental 3D Line Segment Extraction](https://github.com/shidahe/semidense-lines)
 
