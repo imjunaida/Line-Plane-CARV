@@ -211,6 +211,7 @@ ProbabilityMapping::ProbabilityMapping(ORB_SLAM2::Map* pMap, Modeler* pModeler):
     mpMap->SetModeler(mpModeler);
     mpModelDrawer->SetModeler(mpModeler);
     mLineDetector = new LineDetector();
+    mPlaneExtractor = new PlaneExtractor();
 }
 
 void ProbabilityMapping::Run()
@@ -306,10 +307,10 @@ void ProbabilityMapping::SemiDenseLoop(){
         clock_gettime(CLOCK_MONOTONIC, &start);*/
 
         // detect edge map
-        //mLineDetector->DetectEdgeMap(kf);
+        mLineDetector->DetectEdgeMap(kf);
 
         // detect line segments
-        //mLineDetector->DetectLineSegments(kf);
+        mLineDetector->DetectLineSegments(kf);
 
         /*clock_gettime(CLOCK_MONOTONIC, &finish);
         duration = ( finish.tv_sec - start.tv_sec );
@@ -366,7 +367,7 @@ void ProbabilityMapping::SemiDenseLoop(){
             {
 
                 // speed up by only computing depth for edge pixels (optional)
-                if(kf->mEdgeIndex.at<int>(y,x) < 0) continue;
+                //if(kf->mEdgeIndex.at<int>(y,x) < 0) continue;
 
                 if(kf->GradImg.at<float>(y,x) <= lambdaG){continue;}
                 float pixel = (float)image.at<uchar>(y,x); //maybe it should be cv::Mat
@@ -450,7 +451,7 @@ void ProbabilityMapping::SemiDenseLoop(){
             continue;
         }
 
-        std::cout << "InterKeyFrameDepthChecking " << i << std::endl;
+        //std::cout << "InterKeyFrameDepthChecking " << i << std::endl;
         InterKeyFrameDepthChecking(kf,closestMatches);
 
         UpdateSemiDensePointSet(kf);
@@ -539,7 +540,7 @@ void ProbabilityMapping::ResetIfRequested()
         delete mpModeler;
         mpModeler = newModeler;*/
         mLineDetector->Reset();
-        //mPlaneExtractor->Reset();
+        mPlaneExtractor->Reset();
         mbResetRequested=false;
     }
 }
@@ -611,12 +612,24 @@ void ProbabilityMapping::UpdateAllSemiDensePointSet(){
         }
         if(!kf->line3D_flag){
         mLineDetector->LineFittingOnline(kf);
-        //mPlaneExtractor->ComputePlanes(kf);
+        mPlaneExtractor->ComputePlanes(kf);
+        }
+        else{
+        kf->mLines3D.release();
+        kf->mPlanes.clear();
+        kf->mPlaneNormals.clear();
+        kf->mLines.release();
+        kf->mPlaneLines.clear();
+        kf->mValidPlane.clear();
+        kf->mLinesSeg.release();
+        mLineDetector->LineFittingOnline(kf);
+        mPlaneExtractor->ComputePlanes(kf);   
+
         }
         if(!kf->mTranscriptFlag)
         {
-            mpModeler->AddLineSegmentKeyFrameEntry(kf);
-            //mpModeler->AddPlaneKeyFrameEntry(kf);
+            //mpModeler->AddLineSegmentKeyFrameEntry(kf);
+            mpModeler->AddPlaneKeyFrameEntry(kf);
         }
         kf->SetEraseSemiDense();
         

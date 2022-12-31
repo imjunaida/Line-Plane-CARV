@@ -39,34 +39,28 @@ void PlaneExtractor::ComputePlanes(ORB_SLAM2::KeyFrame* kf )
 }
 void PlaneExtractor::GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf)
 {
-    struct timespec start, finish;
-    double duration;
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    float c1=0,c2=0,c3=0,c4=0,c5=0,c6=0;
     for(size_t i=0; i< kf->mLines3D.rows;i++)
     {
         cv::Point3d diri =getLineDirection(kf->mLines3D.row(i));
         if (isZero(diri))
-            {c1++;
+            {
                 continue;
             }
        for(size_t j=i+1; j< kf->mLines3D.rows;j++)
        {
             cv::Point3d dirj = getLineDirection(kf->mLines3D.row(j));
             if (isZero(dirj)){
-                c2++;
                 continue;
             }
             if(abs(diri.dot(dirj)) > cos(MIN_LINE_ANGLE))
             {
-            c3++;
             //GetPlanesFromParallelLines(i, j, kf);
             continue;
             }
             else
             {
                 if (checkFeasibility(i,j,kf))
-                { c4++;
+                {
                     cv::Point3d planeNormal =diri.cross(dirj);
                     float norm= sqrt(planeNormal.x*planeNormal.x + planeNormal.y*planeNormal.y + planeNormal.z*planeNormal.z);
                     planeNormal=planeNormal/norm;
@@ -83,7 +77,7 @@ void PlaneExtractor::GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf)
                     float dmax = std::max({d1,d2,d3,d4});
                     float dmin = std::min({d1,d2,d3,d4});
                     if(abs(dmax-dmin) > COPLANARITY_THRES)
-                       { c5++;
+                       {
                            continue;
                        }
                     float D = -(d1+d2+d3+d4)/4;
@@ -94,7 +88,7 @@ void PlaneExtractor::GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf)
                         planeNormal=-planeNormal;
                     }
                     if (checkRedundant(plane,kf))
-                        {c6++;
+                        {
                             continue;
                         }
                     //cv::Mat wplane = WorldFramePlane(plane,kf);// World Frame
@@ -114,8 +108,6 @@ void PlaneExtractor::GetPlanesfromLines(ORB_SLAM2::KeyFrame* kf)
        }
 
     }
-       std::cout<<"Number of planes extracted "<<kf->mPlanes.size()<<std::endl;
-       std::cout<<"Counters c1 to c6 "<<c1<<" "<<c2<<" "<<c3<<" "<<c4<<" "<<c5<<" "<<c6<<" "<<std::endl;
 }
 
 bool PlaneExtractor::isZero(cv::Point3d pt)
@@ -181,7 +173,7 @@ bool PlaneExtractor::checkFeasibility(int i,int j, ORB_SLAM2::KeyFrame* kf)
 
 bool PlaneExtractor::checkRedundant(cv::Vec4f plane,ORB_SLAM2::KeyFrame *kf)
 {
-    std::cout<<"mAllPlanes.size() "<<mAllPlanes.size()<<std::endl;
+    //std::cout<<"mAllPlanes.size() "<<mAllPlanes.size()<<std::endl;
     for(size_t i=0; i < kf->mPlanes.size();i++)
     {
 
@@ -357,7 +349,7 @@ void PlaneExtractor::SaveAllPlaneLineSegments(std::string mStrDateTime) {
 }
 
 void PlaneExtractor::InterKFPlaneMatch(ORB_SLAM2::KeyFrame *kf)
-{
+{   //std::cout<<"All planes size "<<mAllPlanes.size()<<std::endl;
     if(mAllPlanes.empty())
     {
      for (int i=0; i<kf->mPlanes.size(); i++)
@@ -416,7 +408,7 @@ void PlaneExtractor::InterKFPlaneMatch(ORB_SLAM2::KeyFrame *kf)
 	                    mAllPlanes[j]=kf->mPlanes[i];
 	                    mPlaneValidity[j]++;
 	                    mAllPlaneLines[j]=getPlaneLines(p,q,kf);
-                        if(mPlaneValidity[j]==3)
+                        if(mPlaneValidity[j]==2)
                         {
                             kf->mValidPlane[i]=true;
                         }

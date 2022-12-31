@@ -1182,11 +1182,7 @@ void Tracking::CreateNewKeyFrame()
             }
         }
     }
-    // detect edge map
-    mLineDetector.DetectEdgeMap(pKF);
-
-        // detect line segments
-    mLineDetector.DetectLineSegments(pKF);
+ 
 
     mpLocalMapper->InsertKeyFrame(pKF);
 
