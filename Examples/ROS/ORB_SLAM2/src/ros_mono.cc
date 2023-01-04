@@ -27,6 +27,7 @@
 #include<ros/ros.h>
 #include <std_msgs/Header.h>
 #include "std_msgs/String.h"
+#include <geometry_msgs/Pose.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include<opencv2/core/core.hpp>
@@ -35,7 +36,7 @@
 
 #include "../../../include/KeyFrame.h"
 // #include "../../../include/MapPoint.h"
-// #include "../../../include/Converter.h"
+#include "../../../include/Converter.h"
 // #include "../../../include/Map.h"
 // #include "../../../include/MapPoint.h"
 
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nodeHandler;
     ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
 
-    pubTask = nodeHandler.advertise<std_msgs::String>("/chris/twc", 1);
+    pubTask = nodeHandler.advertise<geometry_msgs::Pose>("/Keyframe/Pose", 1);
     pubCARVScripts = nodeHandler.advertise<std_msgs::String>("/carv/script", 1);
     ros::spin();
 
@@ -114,27 +115,23 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
       int nowMaxId=mpSLAM->mpMap->GetMaxKFid();
       if(nowMaxId > max_kfId)
       {
-        cv::Mat TWC = pKF->GetPoseInverse();//return TWC
+        std::vector<float> TWC = ORB_SLAM2::Converter::toQuaternion(pKF->GetPoseInverse()) ;//return TWC
+        cv::Mat center = pKF->GetCameraCenter();
 
         //cout<<"key frame mnId: "<<pKF->mnId<<endl;//int--------------------------------------debug
-        //cout.precision(15);
+       //cout.precision(15);
         //cout<<"key frame timestamp"<<std::fixed<<pKF->mTimeStamp<<endl;//double--------------------------------------debug
         //cout<<"ros mono MyCurrent Key Frame. camera center: "<<endl<<pKF->GetCameraCenter()<<endl;//--------------------------------debug
 
-        std_msgs::String msg;
-        std::stringstream ss;
-        ss<<pKF->mnId<<",";
-        ss<<std::setprecision(15)<<pKF->mTimeStamp<<",";
-        for(int ti=0;ti<TWC.rows;ti++)
-        {
-          for(int tj=0;tj<TWC.cols;tj++)
-          {
-            std::ostringstream ssss;
-            ssss << TWC.at<float>(ti,tj);
-            ss<<ssss.str()<<",";
-          }
-        }
-        msg.data = ss.str();
+        geometry_msgs::Pose msg;
+        msg.position.x=center.at<float>(0);
+        msg.position.y=center.at<float>(1);
+        msg.position.z=center.at<float>(2);
+        msg.orientation.x=TWC[0];
+        msg.orientation.y=TWC[1];
+        msg.orientation.z=TWC[2];
+        msg.orientation.w=TWC[3];
+
         pubTask.publish(msg);
         max_kfId=nowMaxId;
       }
