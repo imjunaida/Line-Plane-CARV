@@ -16,13 +16,14 @@
 
         if (imAndTexFrame.size() >= numKFs) {
             //static unsigned int frameTex[2] = {0, 0};
-            static unsigned int frameTex[1] = {0};
+            static unsigned int frameTex[1] = {};
             if (!frameTex[0])
                 glGenTextures(numKFs, frameTex);
 
             cv::Size imSize = imAndTexFrame[0].first.size();
 
             for (int i = 0; i < numKFs; i++) {
+                glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, frameTex[i]);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -231,7 +231,7 @@ std::vector<pair<cv::Mat,TextureFrame>> Modeler::GetTextures(int n)
         int nLastKF = mdTextureQueue.size() - 1;
         std::vector<pair<cv::Mat,TextureFrame>> imAndTexFrame;
         // n most recent KFs
-        for (int i = 0; i < n && i <= nLastKF; i++){
+        for (int i = 0; i<n && i <= nLastKF; i++){
             TextureFrame texFrame = mdTextureQueue[std::max(0,nLastKF-i)];
             imAndTexFrame.push_back(make_pair(mmFrameQueue[texFrame.mFrameID],texFrame));
         }

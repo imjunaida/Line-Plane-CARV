@@ -367,7 +367,7 @@ void ProbabilityMapping::SemiDenseLoop(){
             {
 
                 // speed up by only computing depth for edge pixels (optional)
-                //if(kf->mEdgeIndex.at<int>(y,x) < 0) continue;
+                if(kf->mEdgeIndex.at<int>(y,x) < 0) continue;
 
                 if(kf->GradImg.at<float>(y,x) <= lambdaG){continue;}
                 float pixel = (float)image.at<uchar>(y,x); //maybe it should be cv::Mat
@@ -614,7 +614,7 @@ void ProbabilityMapping::UpdateAllSemiDensePointSet(){
         mLineDetector->LineFittingOnline(kf);
         mPlaneExtractor->ComputePlanes(kf);
         }
-        else{
+    /*else{
         kf->mLines3D.release();
         kf->mPlanes.clear();
         kf->mPlaneNormals.clear();
@@ -625,7 +625,7 @@ void ProbabilityMapping::UpdateAllSemiDensePointSet(){
         mLineDetector->LineFittingOnline(kf);
         mPlaneExtractor->ComputePlanes(kf);   
 
-        }
+        }*/
         if(!kf->mTranscriptFlag)
         {
             //mpModeler->AddLineSegmentKeyFrameEntry(kf);

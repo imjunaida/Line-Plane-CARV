@@ -742,12 +742,35 @@ namespace dlovi {
             return -1;
         }
 
-        // Write out lines one by one.
         for (vector<Matrix>::const_iterator itPoints = points.begin(); itPoints != points.end(); itPoints++)
             outfile << "v " << itPoints->at(0) << " " << itPoints->at(1) << " " << itPoints->at(2) << endl;
-        for (list<Matrix>::const_iterator itTris = tris.begin(); itTris != tris.end(); itTris++)
-            outfile << "f " << (round(itTris->at(0)) + 1) << " " << (round(itTris->at(1)) + 1) << " " << (round(itTris->at(2)) + 1) << endl;
+        list<Matrix>::const_iterator itTris;
+        unsigned int i;
+        for (itTris = tris.begin(),i=0; itTris != tris.end(); itTris++,++i){
+                dlovi::Matrix point0 = points[(*itTris)(0)];
+                dlovi::Matrix point1 = points[(*itTris)(1)];
+                dlovi::Matrix point2 = points[(*itTris)(2)];
 
+                dlovi::Matrix edge10 = point1 - point0;
+                dlovi::Matrix edge20 = point2 - point0;
+                dlovi::Matrix edge30 = point2 - point1;
+
+                dlovi::Matrix normal1 = edge20.cross(edge10);
+
+                normal1 = normal1 / normal1.norm();
+
+                dlovi::Matrix normal2 = edge30.cross(edge20);
+
+                normal2 = normal2 / normal2.norm();
+
+                dlovi::Matrix normal3 = edge30.cross(edge10);
+
+                normal3 = normal3 / normal3.norm();
+
+            outfile << "vn " << normal1(0) << " " << normal1(1) << " " << normal1(2) << endl;
+            outfile << "vn " << normal2(0) << " " << normal2(1) << " " << normal2(2) << endl;
+            outfile << "vn " << normal3(0) << " " << normal3(1) << " " << normal3(2) << endl;
+            outfile << "f " << (round(itTris->at(0)) + 1) << "//"<<i+1<<" " << (round(itTris->at(1)) + 1) << "//"<<i+2<<" " << (round(itTris->at(2)) + 1) << "//"<<i+1<< endl;}
         // Close the file and return
         outfile.close();
         return 0;
@@ -757,8 +780,33 @@ namespace dlovi {
         // Write out lines one by one.
         for (vector<Matrix>::const_iterator itPoints = points.begin(); itPoints != points.end(); itPoints++)
             outfile << "v " << itPoints->at(0) << " " << itPoints->at(1) << " " << itPoints->at(2) << endl;
-        for (list<Matrix>::const_iterator itTris = tris.begin(); itTris != tris.end(); itTris++)
-            outfile << "f " << (round(itTris->at(0)) + 1) << " " << (round(itTris->at(1)) + 1) << " " << (round(itTris->at(2)) + 1) << endl;
+        list<Matrix>::const_iterator itTris;
+        unsigned int i;
+        for (itTris = tris.begin(),i=0; itTris != tris.end(); itTris++,++i){
+                dlovi::Matrix point0 = points[(*itTris)(0)];
+                dlovi::Matrix point1 = points[(*itTris)(1)];
+                dlovi::Matrix point2 = points[(*itTris)(2)];
+
+                dlovi::Matrix edge10 = point1 - point0;
+                dlovi::Matrix edge20 = point2 - point0;
+                dlovi::Matrix edge30 = point2 - point1;
+
+                dlovi::Matrix normal1 = edge20.cross(edge10);
+
+                normal1 = normal1 / normal1.norm();
+
+                dlovi::Matrix normal2 = edge30.cross(edge20);
+
+                normal2 = normal2 / normal2.norm();
+
+                dlovi::Matrix normal3 = edge30.cross(edge10);
+
+                normal3 = normal3 / normal3.norm();
+
+            outfile << "vn " << normal1(0) << " " << normal1(1) << " " << normal1(2) << endl;
+            outfile << "vn " << normal2(0) << " " << normal2(1) << " " << normal2(2) << endl;
+            outfile << "vn " << normal3(0) << " " << normal3(1) << " " << normal3(2) << endl;
+            outfile << "f " << (round(itTris->at(0)) + 1) << "// "<<i+1<<" " << (round(itTris->at(1)) + 1) << "// "<<i+2<<" " << (round(itTris->at(2)) + 1) << "// "<<i+1<< endl;}
     }
 
     // Private Methods

@@ -215,7 +215,7 @@ void SFMTranscriptInterface_ORBSLAM::addLineSegmentKeyFrameInsertionEntry(ORB_SL
             float x1 = (kf->mLines3D.at<float>(i,3) - kf->mLines3D.at<float>(i,0))/10;
             float y1 = (kf->mLines3D.at<float>(i,4) - kf->mLines3D.at<float>(i,1))/10;
             float z1 = (kf->mLines3D.at<float>(i,5) - kf->mLines3D.at<float>(i,2))/10;
-            for (int j=0;j<=10;j++)
+            for (int j=0;j<=10;j=j+5)
             {
                 matNewPoint(0) = kf->mLines3D.at<float>(i,0) + j*x1;
                 matNewPoint(1) = kf->mLines3D.at<float>(i,1) + j*y1;
@@ -602,7 +602,7 @@ void SFMTranscriptInterface_ORBSLAM::addPlaneKeyFrameInsertionEntry(ORB_SLAM2::K
         int counter=0;
 
         for (int i = 0; i < kf->mPlanes.size(); i++)
-         {
+         {  std::cout<<"mAllplanes.size(): "<<kf->mPlanes.size()<<std::endl;
             if(!kf->mValidPlane[i])
                 {continue;}
                     
@@ -613,7 +613,7 @@ void SFMTranscriptInterface_ORBSLAM::addPlaneKeyFrameInsertionEntry(ORB_SLAM2::K
                     float y1 = (kf->mLines3D.at<float>(p,4) - kf->mLines3D.at<float>(p,1))/10;
                     float z1 = (kf->mLines3D.at<float>(p,5) - kf->mLines3D.at<float>(p,2))/10;
 
-                    for (int j=0;j<=10;j=j+5)
+                    for (int j=0;j<=10;j=j+2)
                     {
                         matNewPoint(0) = kf->mLines3D.at<float>(p,0) + j*x1;
                         matNewPoint(1) = kf->mLines3D.at<float>(p,1) + j*y1;
@@ -627,7 +627,7 @@ void SFMTranscriptInterface_ORBSLAM::addPlaneKeyFrameInsertionEntry(ORB_SLAM2::K
                     y1 = (kf->mLines3D.at<float>(q,4) - kf->mLines3D.at<float>(q,1))/10;
                     z1 = (kf->mLines3D.at<float>(q,5) - kf->mLines3D.at<float>(q,2))/10;
 
-                    for (int j=0;j<=10;j=j+1)
+                    for (int j=0;j<=10;j=j+2)
                     {
                         matNewPoint(0) = kf->mLines3D.at<float>(q,0) + j*x1;
                         matNewPoint(1) = kf->mLines3D.at<float>(q,1) + j*y1;

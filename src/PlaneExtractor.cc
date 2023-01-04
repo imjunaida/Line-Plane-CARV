@@ -412,7 +412,10 @@ void PlaneExtractor::InterKFPlaneMatch(ORB_SLAM2::KeyFrame *kf)
                         {
                             kf->mValidPlane[i]=true;
                         }
-		            }         
+		            }
+                    else{  
+                    kf->mValidPlane[i]=true;
+                    }       
                     disTh = abs(dist);
                     angTh = angle;
                     matchFlag=1;
