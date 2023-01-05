@@ -46,7 +46,10 @@ class ModelDrawer{
         list<dlovi::Matrix> & GetTris();
 
         void SetModeler(Modeler* pModeler);
+        int writeobj(string strfilename);
         Modeler* mpModeler;
+        std::map<dlovi::Matrix,list<vector<float>>> Vt;
+        std::mutex mMutexVt;
     private:
 
 

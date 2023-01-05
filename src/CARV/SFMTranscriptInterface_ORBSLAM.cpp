@@ -602,7 +602,7 @@ void SFMTranscriptInterface_ORBSLAM::addPlaneKeyFrameInsertionEntry(ORB_SLAM2::K
         int counter=0;
 
         for (int i = 0; i < kf->mPlanes.size(); i++)
-         {  std::cout<<"mAllplanes.size(): "<<kf->mPlanes.size()<<std::endl;
+         {  
             if(!kf->mValidPlane[i])
                 {continue;}
                     

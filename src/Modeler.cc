@@ -82,7 +82,9 @@ Modeler::Modeler(ModelDrawer* pModelDrawer): mpModelDrawer(pModelDrawer),mnLastN
 }
 void Modeler::WriteModel(std::string filename)
 {
-    mAlgInterface.writeCurrentModelToFile(filename);
+    mAlgInterface.writeCurrentModelToFile(filename,mpModelDrawer);
+    //mpModelDrawer->writeobj(filename);
+
 }
 
 void Modeler::AddKeyFrameEntry(ORB_SLAM2::KeyFrame *pKF)
@@ -154,8 +156,8 @@ void Modeler::Run()
                 }
                 std::string strFileName("ObjectFiles/model.obj");
                 std::string strFinalFilename("ObjectFiles/finalmodel.obj");
-                WriteModel(strFileName);
-                boost::filesystem::copy_file(strFileName,strFinalFilename,boost::filesystem::copy_option::overwrite_if_exists);
+                //WriteModel(strFileName);
+                //boost::filesystem::copy_file(strFileName,strFinalFilename,boost::filesystem::copy_option::overwrite_if_exists);               
             }
             ResetIfRequested();
 

@@ -3,6 +3,7 @@
 //
 
 #include "CARV/ModelDrawer.h"
+#include <boost/filesystem.hpp>
 
     ModelDrawer::ModelDrawer():mbModelUpdateRequested(false), mbModelUpdateDone(true)
     {
@@ -51,7 +52,7 @@
 
             glBegin(GL_TRIANGLES);
             glColor3f(1.0,1.0,1.0);
-
+            
             for (list<dlovi::Matrix>::const_iterator it = GetTris().begin(); it != GetTris().end(); it++) {
 
                 dlovi::Matrix point0 = GetPoints()[(*it)(0)];
@@ -60,10 +61,10 @@
 
                 dlovi::Matrix edge10 = point1 - point0;
                 dlovi::Matrix edge20 = point2 - point0;
-
+                
                 dlovi::Matrix normal = edge20.cross(edge10);
                 normal = normal / normal.norm();
-
+                
                 glNormal3d(normal(0), normal(1), normal(2));
 
                 vector<double> dotProducts;
@@ -106,14 +107,86 @@
                         glTexCoord2f(uv2[0], uv2[1]);
                         glVertex3d(point2(0), point2(1), point2(2));
 
+                        /*unique_lock<mutex> lock(mMutexVt);
+                        std::list<vector<float>> vtvalues;
+                        vtvalues.push_front(uv0);
+                        vtvalues.push_front(uv1);
+                        vtvalues.push_front(uv2);
+                        Vt.insert({*it,vtvalues});
+                        cv::imwrite("tex.jpg",imAndTexFrame[i].first);*/
                         break;
                     }
                 }
-            }
+                }
             glEnd();
 
             glDisable(GL_TEXTURE_2D);
         }
+    }
+
+    int ModelDrawer::writeobj(string filename)
+    {
+        ofstream outfile;
+
+        // Open file
+        outfile.open(filename.c_str());
+        if (! outfile.is_open()) {
+            cerr << "Unable to open file: " << filename << endl;
+            return -1;
+        }
+        outfile << "mtllib texture.mtl"<< endl;
+        for (vector<dlovi::Matrix>::const_iterator itPoints = GetPoints().begin(); itPoints != GetPoints().end(); itPoints++)
+            outfile << "v " << -1*itPoints->at(0) << " " << -1*itPoints->at(1) << " " << itPoints->at(2) << endl;
+        list<dlovi::Matrix>::const_iterator itTris;
+        unsigned int i;
+        outfile <<"usemtl material0"<<endl;
+        int c=0;
+        for (itTris = GetTris().begin(),i=0; itTris != GetTris().end(); itTris++,++i){
+                dlovi::Matrix point0 = GetPoints()[(*itTris)(0)];
+                dlovi::Matrix point1 = GetPoints()[(*itTris)(1)];
+                dlovi::Matrix point2 = GetPoints()[(*itTris)(2)];
+
+                dlovi::Matrix edge10 = point1 - point0;
+                dlovi::Matrix edge20 = point2 - point0;
+
+                dlovi::Matrix normal = edge20.cross(edge10);
+
+                normal = normal / normal.norm();
+
+            outfile << "vn " << normal(0) << " " << normal(1) << " " << normal(2) << endl;
+            unique_lock<mutex> lock(mMutexVt);
+            if(!Vt.empty())
+            {
+                if(Vt.find(*itTris)!=Vt.end())
+                {
+                    std::list<vector<float>> vtvalues = Vt[*itTris];
+                    for(vector<float> vtlist:vtvalues)
+                    {
+                    outfile << "vt " << vtlist[0] << " " << vtlist[1]<< endl;
+                    std::cout<<"Texture Written"<<std::endl;
+                    }
+                 outfile << "f " << (round(itTris->at(0)) + 1) << "/"<<c+1<<"/"<<i+1<<" " << (round(itTris->at(1)) + 1) << "/"<<c+2<<"/"<<i+1<<" " << (round(itTris->at(2)) + 1) << "/"<<c+3<<"/"<<i+1<< endl;
+
+                c=+3;
+                }
+                else
+                {
+                outfile << "f " << (round(itTris->at(0)) + 1) << "//"<<i+1<<" " << (round(itTris->at(1)) + 1) << "//"<<i+1<<" " << (round(itTris->at(2)) + 1) << "//"<<i+1<< endl;
+                }
+
+                }
+            else
+            {
+                outfile << "f " << (round(itTris->at(0)) + 1) << "//"<<i+1<<" " << (round(itTris->at(1)) + 1) << "//"<<i+1<<" " << (round(itTris->at(2)) + 1) << "//"<<i+1<< endl;
+
+            }
+            Vt.clear();
+
+            }
+        // Close the file and return
+
+        outfile.close();
+        return 0;
     }
 
     void ModelDrawer::DrawModelPoints()
