@@ -82,7 +82,7 @@ Modeler::Modeler(ModelDrawer* pModelDrawer): mpModelDrawer(pModelDrawer),mnLastN
 }
 void Modeler::WriteModel(std::string filename)
 {
-    mAlgInterface.writeCurrentModelToFile(filename,mpModelDrawer);
+    mAlgInterface.writeCurrentModelToFile(filename);
     //mpModelDrawer->writeobj(filename);
 
 }

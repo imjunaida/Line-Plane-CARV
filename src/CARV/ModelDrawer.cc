@@ -107,7 +107,8 @@
                         glTexCoord2f(uv2[0], uv2[1]);
                         glVertex3d(point2(0), point2(1), point2(2));
 
-                        /*unique_lock<mutex> lock(mMutexVt);
+                        /*TODO: Save textured model
+                        unique_lock<mutex> lock(mMutexVt);
                         std::list<vector<float>> vtvalues;
                         vtvalues.push_front(uv0);
                         vtvalues.push_front(uv1);
@@ -125,7 +126,7 @@
     }
 
     int ModelDrawer::writeobj(string filename)
-    {
+    {   //TODO: Save textured model
         ofstream outfile;
 
         // Open file
