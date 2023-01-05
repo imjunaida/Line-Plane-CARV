@@ -81,7 +81,14 @@ int main(int argc, char **argv)
 
     pubTask = nodeHandler.advertise<geometry_msgs::Pose>("/Keyframe/Pose", 1);
     pubCARVScripts = nodeHandler.advertise<std_msgs::String>("/carv/script", 1);
-    ros::spin();
+    ros::Rate loop_rate(30.0);
+ 
+    while(ros::ok())
+    {
+      ros::spinOnce();
+      publishCameraPose();
+      loop_rate.sleep();
+    }
 
     // Stop all threads
     SLAM.Shutdown();
@@ -94,21 +101,8 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
+void publishCameraPose()
 {
-    // Copy the ros image message to cv::Mat.
-    cv_bridge::CvImageConstPtr cv_ptr;
-    try
-    {
-        cv_ptr = cv_bridge::toCvShare(msg);
-    }
-    catch (cv_bridge::Exception& e)
-    {
-        ROS_ERROR("cv_bridge exception: %s", e.what());
-        return;
-    }
-
-    mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
     ORB_SLAM2::KeyFrame* pKF = mpSLAM->mpMap->newestKeyFrame;;
     if(pKF != NULL)
     {
@@ -136,6 +130,25 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         max_kfId=nowMaxId;
       }
     }
+
+
+}
+
+void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
+{
+    // Copy the ros image message to cv::Mat.
+    cv_bridge::CvImageConstPtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvShare(msg);
+    }
+    catch (cv_bridge::Exception& e)
+    {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+        return;
+    }
+
+    mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
     //std_msgs::String msgScript;  //publish CARV model scripts
     //msgScript.data = mpSLAM->mpModeler->mTranscriptInterface.m_SFMTranscript.getNewCommand();
     //if(msgScript.data !="")
