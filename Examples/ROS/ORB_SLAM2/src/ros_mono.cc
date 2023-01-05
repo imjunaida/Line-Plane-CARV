@@ -50,7 +50,7 @@ public:
     ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM){}
 
     void GrabImage(const sensor_msgs::ImageConstPtr& msg);
-
+    void publishCameraPose();
     ORB_SLAM2::System* mpSLAM;
 };
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     while(ros::ok())
     {
       ros::spinOnce();
-      publishCameraPose();
+      igb.publishCameraPose();
       loop_rate.sleep();
     }
 
@@ -101,9 +101,9 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void publishCameraPose()
+void ImageGrabber::publishCameraPose()
 {
-    ORB_SLAM2::KeyFrame* pKF = mpSLAM->mpMap->newestKeyFrame;;
+    ORB_SLAM2::KeyFrame* pKF = mpSLAM->mpMap->newestKeyFrame;
     if(pKF != NULL)
     {
       int nowMaxId=mpSLAM->mpMap->GetMaxKFid();
