@@ -731,7 +731,7 @@ namespace dlovi {
         // tetsToTris_naive(dt, points, tris, nVoteThresh);
     }
 
-    int FreespaceDelaunayAlgorithm::writeObj(const string filename, const vector<Matrix> & points, const list<Matrix> & tris) const {
+     int FreespaceDelaunayAlgorithm::writeObj(const string filename, const vector<Matrix> & points, const list<Matrix> & tris) const {
         // TODO: handle better for invalid files (e.g. throw exception).
         ofstream outfile;
 
@@ -743,7 +743,7 @@ namespace dlovi {
         }
 
         for (vector<Matrix>::const_iterator itPoints = points.begin(); itPoints != points.end(); itPoints++)
-            outfile << "v " << itPoints->at(0) << " " << itPoints->at(1) << " " << itPoints->at(2) << endl;
+            outfile << "v " << -1*itPoints->at(0) << " " << -1*itPoints->at(1) << " " << itPoints->at(2) << endl;
         list<Matrix>::const_iterator itTris;
         unsigned int i;
         for (itTris = tris.begin(),i=0; itTris != tris.end(); itTris++,++i){
@@ -759,18 +759,8 @@ namespace dlovi {
 
                 normal1 = normal1 / normal1.norm();
 
-                dlovi::Matrix normal2 = edge30.cross(edge20);
-
-                normal2 = normal2 / normal2.norm();
-
-                dlovi::Matrix normal3 = edge30.cross(edge10);
-
-                normal3 = normal3 / normal3.norm();
-
             outfile << "vn " << normal1(0) << " " << normal1(1) << " " << normal1(2) << endl;
-            outfile << "vn " << normal2(0) << " " << normal2(1) << " " << normal2(2) << endl;
-            outfile << "vn " << normal3(0) << " " << normal3(1) << " " << normal3(2) << endl;
-            outfile << "f " << (round(itTris->at(0)) + 1) << "//"<<i+1<<" " << (round(itTris->at(1)) + 1) << "//"<<i+2<<" " << (round(itTris->at(2)) + 1) << "//"<<i+1<< endl;}
+            outfile << "f " << (round(itTris->at(0)) + 1) << "//"<<i+1<<" " << (round(itTris->at(1)) + 1) << "//"<<i+1<<" " << (round(itTris->at(2)) + 1) << "//"<<i+1<< endl;}
         // Close the file and return
         outfile.close();
         return 0;

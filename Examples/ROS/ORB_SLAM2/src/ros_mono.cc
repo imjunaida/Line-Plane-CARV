@@ -50,7 +50,7 @@ public:
     ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM){}
 
     void GrabImage(const sensor_msgs::ImageConstPtr& msg);
-
+    void publishCameraPose();
     ORB_SLAM2::System* mpSLAM;
 };
 
@@ -82,6 +82,14 @@ int main(int argc, char **argv)
     pubTask = nodeHandler.advertise<geometry_msgs::Pose>("/Keyframe/Pose", 1);
     pubCARVScripts = nodeHandler.advertise<std_msgs::String>("/carv/script", 1);
     ros::spin();
+    /*(ros::Rate loop_rate(30.0);
+ 
+    while(ros::ok())
+    {
+      ros::spinOnce();
+      //igb.publishCameraPose();
+      loop_rate.sleep();
+    }*/
 
     // Stop all threads
     SLAM.Shutdown();
@@ -94,29 +102,15 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
+void ImageGrabber::publishCameraPose()
 {
-    // Copy the ros image message to cv::Mat.
-    cv_bridge::CvImageConstPtr cv_ptr;
-    try
-    {
-        cv_ptr = cv_bridge::toCvShare(msg);
-    }
-    catch (cv_bridge::Exception& e)
-    {
-        ROS_ERROR("cv_bridge exception: %s", e.what());
-        return;
-    }
+    cv::Mat pose = mpSLAM->mpMapDrawer->GetCurrentCameraMatrix();
 
-    mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
-    ORB_SLAM2::KeyFrame* pKF = mpSLAM->mpMap->newestKeyFrame;;
-    if(pKF != NULL)
-    {
-      int nowMaxId=mpSLAM->mpMap->GetMaxKFid();
-      if(nowMaxId > max_kfId)
-      {
-        std::vector<float> TWC = ORB_SLAM2::Converter::toQuaternion(pKF->GetPoseInverse()) ;//return TWC
-        cv::Mat center = pKF->GetCameraCenter();
+        std::vector<float> TWC = ORB_SLAM2::Converter::toQuaternion(pose) ;//return TWC
+        cv::Mat Rcw = pose.rowRange(0,3).colRange(0,3);
+        cv::Mat tcw = pose.rowRange(0,3).col(3);
+        cv::Mat Rwc = Rcw.t();
+        cv::Mat center = -Rwc*tcw;
 
         //cout<<"key frame mnId: "<<pKF->mnId<<endl;//int--------------------------------------debug
        //cout.precision(15);
@@ -133,9 +127,26 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         msg.orientation.w=TWC[3];
 
         pubTask.publish(msg);
-        max_kfId=nowMaxId;
-      }
     }
+
+
+
+void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
+{
+    // Copy the ros image message to cv::Mat.
+    cv_bridge::CvImageConstPtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvShare(msg);
+    }
+    catch (cv_bridge::Exception& e)
+    {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+        return;
+    }
+
+    mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
+    publishCameraPose();
     //std_msgs::String msgScript;  //publish CARV model scripts
     //msgScript.data = mpSLAM->mpModeler->mTranscriptInterface.m_SFMTranscript.getNewCommand();
     //if(msgScript.data !="")

@@ -75,10 +75,10 @@ void Viewer::Run()
 
     pangolin::CreatePanel("menu").SetBounds(0.0,1.0,0.0,pangolin::Attach::Pix(175));
     pangolin::Var<bool> menuFollowCamera("menu.Follow Camera",true,true);
-    pangolin::Var<bool> menuShowPoints("menu.Show Points",true,true);
-    pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",true,true);
-    pangolin::Var<bool> menuShowGraph("menu.Show Graph",true,true);
-    pangolin::Var<bool> menuShowSemiDense("menu.Show SemiDense",true,true);
+    pangolin::Var<bool> menuShowPoints("menu.Show Points",false,true);
+    pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",false,true);
+    pangolin::Var<bool> menuShowGraph("menu.Show Graph",false,true);
+    pangolin::Var<bool> menuShowSemiDense("menu.Show SemiDense",false,true);
     pangolin::Var<double> menuSigmaTH("menu.Sigma",0.02,1e-10,0.05,false);
     pangolin::Var<bool> menuCameraView("menu.Camera View",true,true);
     pangolin::Var<bool> menuShowModel("menu.Show Model", true,true);
@@ -196,6 +196,7 @@ void Viewer::Run()
         pangolin::FinishFrame();
 
         cv::Mat im = mpFrameDrawer->DrawFrame();
+        cv::resize(im, im, cv::Size(), 0.5, 0.5);
         cv::imshow("ORB-SLAM2: Current Frame",im);
         //stringstream filename;
         //filename<<"ImageFrames/"<<"IMG_"<<(i + 1)<<".png";

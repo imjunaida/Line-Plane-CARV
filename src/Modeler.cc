@@ -156,8 +156,8 @@ void Modeler::Run()
                 }
                 std::string strFileName("ObjectFiles/model.obj");
                 std::string strFinalFilename("ObjectFiles/finalmodel.obj");
-                //WriteModel(strFileName);
-                //boost::filesystem::copy_file(strFileName,strFinalFilename,boost::filesystem::copy_option::overwrite_if_exists);               
+                WriteModel(strFileName);
+                boost::filesystem::copy_file(strFileName,strFinalFilename,boost::filesystem::copy_option::overwrite_if_exists);               
             }
             ResetIfRequested();
 

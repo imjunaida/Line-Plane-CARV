@@ -117,6 +117,8 @@ public:
     // LoadMap(const string &filename);
      Modeler* mpModeler;
      Map* mpMap;
+     MapDrawer* mpMapDrawer;
+
 
 
 private:
@@ -153,7 +155,7 @@ private:
     Viewer* mpViewer;
 
     FrameDrawer* mpFrameDrawer;
-    MapDrawer* mpMapDrawer;
+    
     ProbabilityMapping* mpSemiDenseMapping;
 
     // System threads: Local Mapping, Loop Closing, Viewer.
