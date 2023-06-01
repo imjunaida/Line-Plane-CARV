@@ -31,6 +31,6 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic"
 make -j$nproc
 
-cd ..
-echo "Converting vocabulary to binary"
-./tools/bin_vocabulary
+#cd ..
+#echo "Converting vocabulary to binary"
+#./tools/bin_vocabulary

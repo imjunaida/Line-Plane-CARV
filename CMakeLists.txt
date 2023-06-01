@@ -32,7 +32,7 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 4.0 QUIET)
+find_package(OpenCV 4 QUIET)
 if(NOT OpenCV_FOUND)
     find_package(OpenCV 2.4.3 QUIET)
     if(NOT OpenCV_FOUND)
@@ -50,7 +50,7 @@ if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
-
+find_package(realsense2 REQUIRED)
 # Find CGAL
 set(CMAKE_BUILD_TYPE_BACKUP ${CMAKE_BUILD_TYPE})
 set(CMAKE_BUILD_TYPE "Release")
@@ -72,7 +72,7 @@ ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
 ${PROJECT_SOURCE_DIR}/Thirdparty/EDTest
-
+${realsense2_INCLUDE_DIRS}
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -134,6 +134,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 add_executable(rgbd_tum
 Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(rgbd_tum ${PROJECT_NAME})
+
+
+add_executable(rgbd_realsense
+Examples/RGB-D/rgbd_realsense.cc)
+target_link_libraries(rgbd_realsense ${PROJECT_NAME} ${realsense2_LIBRARY})
+
+
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 

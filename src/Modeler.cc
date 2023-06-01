@@ -214,7 +214,7 @@ void Modeler::AddFrameImage(const long unsigned int &frameID, const cv::Mat &im)
         cv::Mat imc;
         im.copyTo(imc);
         if(imc.channels() < 3)
-            cvtColor(imc,imc,CV_GRAY2RGB);
+            cvtColor(imc,imc,cv::COLOR_GRAY2BGR);
 
         if (mmFrameQueue.size() >= mnMaxFrameQueueSize) {
             mmFrameQueue.erase(mmFrameQueue.begin());

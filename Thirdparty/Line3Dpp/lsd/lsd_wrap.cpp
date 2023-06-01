@@ -25,7 +25,7 @@ int LsdWrap::lsdw(Mat &I, std::vector<seg> &segments, cv::Rect *Roi)
 		return -1;
 	if(I.channels() == 3)
 	{
-		cv::cvtColor(I, Igray, CV_BGR2GRAY);
+		cv::cvtColor(I, Igray, cv::COLOR_BGR2GRAY);
 	}
 	else if (I.channels() == 1)
 	{
@@ -41,7 +41,7 @@ int LsdWrap::lsdw(Mat &I, std::vector<seg> &segments, cv::Rect *Roi)
 	Igray.convertTo(I64F,CV_64FC1);
 
 	//DO LSD
-    double *dp = I64F.ptr<double>(0);
+    double *dp = I64F->ptr<double>(0);
     int X = I64F.cols;
     int Y = I64F.rows;
     int n;
@@ -146,7 +146,7 @@ void LsdWrap::imshow_segs(const std::string &name, Mat &gray, std::vector<seg> &
 		return;
 	if(gray.channels() == 3)
 	{
-		cv::cvtColor(gray, Ig, CV_BGR2GRAY);
+		cv::cvtColor(gray, Ig, cv::COLOR_BGR2GRAY);
 	}
 	else if (gray.channels() == 1)
 	{
@@ -225,7 +225,7 @@ int LsdWrap::CompareSegs(std::vector<seg> &seg1,std::vector<seg> &seg2,
 		}
 		if(I->channels() == 3)
 		{
-			cv::cvtColor(*I, Ig, CV_BGR2GRAY);
+			cv::cvtColor(*I, Ig, cv::COLOR_BGR2GRAY);
 		}
 		else if (I->channels() == 1)
 		{
@@ -268,7 +268,7 @@ int LsdWrap::CompareSegs(cv::Mat &Ig, std::vector<seg> &seg2, const std::string 
 		return -1;
 	if(Ig.channels() == 3)
 	{
-		cv::cvtColor(Ig, I1, CV_BGR2GRAY);
+		cv::cvtColor(Ig, I1, cv::COLOR_BGR2GRAY);
 	}
 	else if (Ig.channels() == 1)
 	{
@@ -303,7 +303,7 @@ int LsdWrap::CompareSegs(cv::Mat &Ig, std::vector<seg> &seg2, const std::string 
 		Mat Igreen;
 		if(I->channels() == 3)
 		{
-			cv::cvtColor(*I, Igreen, CV_BGR2GRAY);
+			cv::cvtColor(*I, Igreen, cv::COLOR_BGR2GRAY);
 		}
 		else if (I->channels() == 1)
 		{

@@ -1054,7 +1054,7 @@ void LineDetector::UpdateCluster(Cluster& c)
         }
 
         cv::Mat center;
-        cv::reduce(A, center, 0, CV_REDUCE_AVG);
+        cv::reduce(A, center, 0, cv::REDUCE_AVG);
 
         cv::Mat B = A.clone();
         for (int i = 0; i < B.rows; i++){

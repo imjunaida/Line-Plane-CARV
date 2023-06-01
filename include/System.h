@@ -22,6 +22,8 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+#include <unistd.h>
+
 #include<string>
 #include<thread>
 #include<opencv2/core/core.hpp>
@@ -39,6 +41,9 @@
 #include "Modeler.h"
 #include "CARV/ModelDrawer.h"
 #include <unistd.h>
+#include <opencv2/imgproc/types_c.h>
+#include <opencv2/opencv.hpp>
+using namespace cv;
 
 class Modeler;
 class ModelDrawer;

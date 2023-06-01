@@ -641,9 +641,9 @@ void LineSegmentDetectorImpl::ll_angle(const double& threshold,
     angles = Mat_<double>(scaled_image.size());
     modgrad = Mat_<double>(scaled_image.size());
 
-    angles_data = angles.ptr<double>(0);
-    modgrad_data = modgrad.ptr<double>(0);
-    scaled_image_data = scaled_image.ptr<double>(0);
+    angles_data = angles->ptr<double>(0);
+    modgrad_data = modgrad->ptr<double>(0);
+    scaled_image_data = scaled_image->ptr<double>(0);
 
     img_width = scaled_image.cols;
     img_height = scaled_image.rows;
@@ -1263,7 +1263,7 @@ void LineSegmentDetectorImpl::drawSegments(InputOutputArray _image, const InputA
     }
     else if (_image.channels() == 3)
     {
-        cvtColor(_image, gray, CV_BGR2GRAY);
+        cvtColor(_image, gray, cv::COLOR_BGR2GRAY);
     }
 
     // Create a 3 channel image in order to draw colored lines
