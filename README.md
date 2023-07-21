@@ -5,6 +5,8 @@ This is a real-time surface reconstruction method using Planar features from the
 
 This version of software is based on [ORB-SLAM2](https://github.com/raulmur/ORB_SLAM2). However we made significant change to the code to make it work on lateset OPENCV and ROS version as of December 2022. We release this software under GPLv3 license.
 
+For more details on the maths and theory behind this system follow the webpage of this project: [PlaneSlam](https://sites.google.com/ualberta.ca/planeslam)
+
 
 
 
@@ -94,6 +96,16 @@ Running ORB_SLAM2 with surface reconstruction
 rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.bin #path_to_calibration_file/*.yaml /camera/image_raw:=/cv_camera/image_raw
 ```
 The object files get saved in the Object Files directory in real-time which can be used by a real-time modeling software.
+
+# 4. Running using the Docker Image
+Run the roscore and hte cv_camera module as done in part 3. Instead of the *rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.bin #path_to_calibration_file/*.yaml /camera/image_raw:=/cv_camera/image_raw* run the following statement
+```
+#Set host local
+host local:
+# Now run the docker image named carv:latest
+sudo docker run --rm -e DISPLAY=$DISPLAY -v /temp/.X11-unix --gpus=all --privileged --network host --env QT_X11_NO_MITSHM=1 -it kesisci/carv:latest /bin/bash
+```
+**Note**: Don't forget to source the setup files as done in part 2. It is one of the common mistakes to simply forget about our good old source files. 
 
 # Important Repositories
 1. [ORB-SLAM Free Space Carving](https://github.com/atlas-jj/ORB-SLAM-free-space-carving)
