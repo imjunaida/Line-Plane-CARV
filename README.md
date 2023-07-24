@@ -7,12 +7,14 @@ This version of software is based on [ORB-SLAM2](https://github.com/raulmur/ORB_
 
 For more details on the maths and theory behind this system follow the webpage of this project: [PlaneSlam](https://sites.google.com/ualberta.ca/planeslam)
 
+ ![Overview](https://github.com/imjunaida/Line-Plane-CARV/assets/30365313/355a0cb7-589d-45cc-9370-6fea48aa567e)
 
 
 
 
 # 1. Prerequisites
-The software is tested in **64-bit Ubuntu 20.04**. 
+The software is tested in **64-bit Ubuntu 20.04**.
+
 
 #### C++14 Compiler
 Normal ORB-SLAM works on c++11 but we updated it to work with c++14 standard
