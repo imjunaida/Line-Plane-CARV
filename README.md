@@ -5,7 +5,7 @@ This is a real-time surface reconstruction method using Planar features from the
 
 This version of software is based on [ORB-SLAM2](https://github.com/raulmur/ORB_SLAM2). However we made significant change to the code to make it work on lateset OPENCV and ROS version as of December 2022. We release this software under GPLv3 license.
 
-For more details on the maths and theory behind this system follow the webpage of this project: [PlaneSlam](https://sites.google.com/ualberta.ca/planeslam)
+For more details on the maths,theory, and experimental results of this system follow the webpage of this project: [PlaneSlam](https://sites.google.com/ualberta.ca/planeslam)
 
  ![Overview](https://github.com/imjunaida/Line-Plane-CARV/assets/30365313/355a0cb7-589d-45cc-9370-6fea48aa567e)
 
